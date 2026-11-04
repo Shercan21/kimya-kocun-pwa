@@ -1,6 +1,6 @@
 import { useContext, useEffect, useRef, useState } from 'react'
 import { EtkinlikKayit, etkinlikSonucuKaydet } from '../data/activityResults'
-import { icerikYolu, type Etkinlik } from '../data/content'
+import { icerikHtml, icerikYolu, type Etkinlik } from '../data/content'
 
 const TUR_AD: Record<Etkinlik['tur'], string> = {
   dy: 'Doğru – yanlış',
@@ -13,7 +13,7 @@ const TUR_AD: Record<Etkinlik['tur'], string> = {
 
 // Etkinlik metinlerinde <sub>, <sup> gibi biçimlendirmeler olabilir.
 function H({ html }: { html: string }) {
-  return <span dangerouslySetInnerHTML={{ __html: html }} />
+  return <span dangerouslySetInnerHTML={{ __html: icerikHtml(html) }} />
 }
 
 function plain(html: string) {
@@ -402,9 +402,9 @@ function Tablo({ data }: { data: Etkinlik }) {
       <Footer
         checked={checked}
         revealed={revealed}
-        score={score}
-        total={keys.length}
-        onCheck={() => setChecked(true)}
+        score={keys.length ? score : undefined}
+        total={keys.length || undefined}
+        onCheck={keys.length ? () => setChecked(true) : undefined}
         onReveal={() => setRevealed(true)}
         onReset={() => { setValues({}); setChecked(false); setRevealed(false) }}
       />
@@ -434,3 +434,4 @@ export default function ActivityRunner({ etkinlik, grade, kod }: { etkinlik: Etk
     </EtkinlikKayit.Provider>
   )
 }
+

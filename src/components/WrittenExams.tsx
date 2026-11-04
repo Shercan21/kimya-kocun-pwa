@@ -164,11 +164,12 @@ export default function WrittenExams({ grades }: Props) {
             <header className="ykbas">
               <b>{grade}. Sınıf Kimya · {secili.donem}. Dönem {secili.yazili}. Ortak Yazılı</b>
               <span>
-                Senaryo {secili.senaryo} · {secili.sorular.length} soru · 100 puan · {secili.sure} dakika
+                {secili.tarih && `${secili.tarih} · `} Senaryo {secili.senaryo} · {secili.sorular.length} soru · 100 puan · {secili.sure} dakika
               </span>
             </header>
 
             <div className="yindir">
+              {secili.pdfAvailable !== false && <>
               <a
                 className="primary-button"
                 href={icerikYolu(`pdf/${grade}/${yaziliPdfAdi(grade, secili)}.pdf`)}
@@ -182,7 +183,8 @@ export default function WrittenExams({ grades }: Props) {
                 download={`${yaziliPdfAdi(grade, secili)}-cevap-anahtari.pdf`}
               >
                 Cevap anahtarını indir (PDF)
-              </a>
+              </a></>}
+              {secili.pdfAvailable === false && <button className="btn-secondary" onClick={() => window.print()}>Yazdır / PDF olarak kaydet</button>}
             </div>
 
             {secili.sorular.map((soru, i) => (

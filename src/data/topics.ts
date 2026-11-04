@@ -32,7 +32,7 @@ const publishedTopics: unknown[] =
 
 // Müfredattaki konular (9, 10, 11) + eski soru havuzunun konuları.
 // İçeriği hazır sınıflarda eski havuz konuları gösterilmez.
-const curriculumTopics: StudyTopic[] = icerikliSiniflar().flatMap(grade =>
+const curriculumTopics = (): StudyTopic[] => icerikliSiniflar().flatMap(grade =>
   tumKonular(grade).map(({ konu }) => ({
     id: konuId(grade, konu.kod),
     title: konu.ad,
@@ -42,8 +42,8 @@ const curriculumTopics: StudyTopic[] = icerikliSiniflar().flatMap(grade =>
   }))
 )
 
-export const builtInTopics: StudyTopic[] = [
-  ...curriculumTopics,
+export const builtInTopics = (): StudyTopic[] => [
+  ...curriculumTopics(),
   ...publishedTopics
     .filter(isPublishedTopic)
     .filter(topic => !icerikliSiniflar().includes(topic.grade))
@@ -56,7 +56,7 @@ export const builtInTopics: StudyTopic[] = [
     })),
 ]
 
-const builtInIds = new Set(builtInTopics.map(topic => topic.id))
+const builtInIds = () => new Set(builtInTopics().map(topic => topic.id))
 
 function loadLocalTopics(): StudyTopic[] {
   try {
@@ -71,7 +71,7 @@ function loadLocalTopics(): StudyTopic[] {
       typeof item.title === 'string' &&
       typeof item.grade === 'number' &&
       typeof item.createdAt === 'string' &&
-      !builtInIds.has(item.id)
+      !builtInIds().has(item.id)
     )
   } catch {
     return []
@@ -80,7 +80,7 @@ function loadLocalTopics(): StudyTopic[] {
 
 // Hazır konular önce, öğrencinin eklediği konular sonra gelir.
 export function loadTopics(): StudyTopic[] {
-  return [...builtInTopics, ...loadLocalTopics()]
+  return [...builtInTopics(), ...loadLocalTopics()]
 }
 
 // Yalnızca öğrencinin eklediği konular kaydedilir.
@@ -89,7 +89,7 @@ export function saveTopics(topics: StudyTopic[]): void {
     TOPICS_KEY,
     JSON.stringify(
       topics
-        .filter(topic => !builtInIds.has(topic.id))
+        .filter(topic => !builtInIds().has(topic.id))
         .map(topic => ({
           id: topic.id,
           title: topic.title,

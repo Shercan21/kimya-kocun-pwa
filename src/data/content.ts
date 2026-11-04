@@ -12,6 +12,7 @@ export type GenelTest = { id: string; baslik: string; soru: number }
 export type Konu = {
   kod: string
   ad: string
+  gizli?: boolean
   kazanimlar: string[]
   test: string
   seviyeler: Seviye[]
@@ -41,6 +42,7 @@ export type SinifMufredat = {
 }
 
 export type Soru = {
+  id?: string
   s: string // HTML soru metni
   sik: string[] // HTML şıklar
   d: number // doğru şık sırası (0'dan)
@@ -54,12 +56,27 @@ export type TestDosyasi = {
   baslik: string
   tur: 'kazanim' | 'baglam' | 'sarmal' | 'karma'
   testler: { seviye: Seviye; sorular: Soru[] }[]
+  legacyTestler?: { seviye: Seviye; sorular: Soru[] }[]
+  silindi?: boolean
 }
 
-const mufredat = mufredatData as unknown as Record<string, SinifMufredat>
+let mufredat = mufredatData as unknown as Record<string, SinifMufredat>
+
+export async function loadPublishedCurriculum() {
+  const controller = new AbortController()
+  const timer = setTimeout(() => controller.abort(), 5000)
+  try {
+    const response = await fetch(import.meta.env.BASE_URL + 'icerik/mufredat.json', { cache: 'no-cache', signal: controller.signal })
+    if (!response.ok) return
+    const data = await response.json() as Record<string, SinifMufredat>
+    if (Object.values(data).every(g => Array.isArray(g.temalar) && g.kazanimlar && Array.isArray(g.karma))) mufredat = data
+  } catch { /* Offline: use bundled curriculum. */ } finally { clearTimeout(timer) }
+}
 
 export function sinifMufredati(grade: number | null): SinifMufredat | null {
-  return grade === null ? null : mufredat[String(grade)] ?? null
+  const data = grade === null ? null : mufredat[String(grade)] ?? null
+  if (!data) return null
+  return { ...data, temalar: data.temalar.map(t => ({ ...t, bolumler: t.bolumler.map(b => ({ ...b, konular: b.konular.filter(k => !k.gizli) })) })) }
 }
 
 export function icerikliSiniflar(): number[] {
@@ -149,6 +166,9 @@ export type YaziliSinav = {
   senaryo: number
   sure: number
   sorular: YaziliSoru[]
+  aktif?: boolean
+  tarih?: string
+  pdfAvailable?: boolean
 }
 export type YaziliDosyasi = {
   sinavlar: YaziliSinav[]
@@ -157,7 +177,7 @@ export type YaziliDosyasi = {
 }
 
 export function yazililar(grade: number) {
-  return load<YaziliDosyasi>(`${grade}/yazili.json`, 'json')
+  return load<YaziliDosyasi>(`${grade}/yazili.json`, 'json').then(d => ({ ...d, sinavlar: d.sinavlar.filter(s => s.aktif !== false) }))
 }
 
 export function yaziliPdfAdi(grade: number, sinav: YaziliSinav) {

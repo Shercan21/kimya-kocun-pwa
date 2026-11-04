@@ -139,6 +139,7 @@ export default function TestRunner({ grade, testId, testIndex, konuKod, konuBasl
       konuKod,
       testBaslik: baslik,
       dogruCevaplar: sorular.map(item => item.d),
+      sorular,
       cevaplar,
     })
     localStorage.removeItem(draftKey)
@@ -212,7 +213,7 @@ export default function TestRunner({ grade, testId, testIndex, konuKod, konuBasl
                 ))}
               </ol>
               {durum !== 'dogru' && (() => {
-                const key = hataKaydiKey(grade, testId, testIndex, i)
+                const key = hataKaydiKey(grade, testId, testIndex, i, item.id)
                 const kayit = hatalar.find(h => h.key === key)
                 return (
                   <div className="neden">

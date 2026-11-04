@@ -39,10 +39,11 @@ function Practice({ keys, onDone }: { keys: string[]; onDone: () => void }) {
   useEffect(() => {
     let active = true
     if (!kayit) return
+    if (kayit.soru) { setSoru(kayit.soru); return }
     testDosyasi(kayit.grade, kayit.testId)
       .then(dosya => {
         if (!active) return
-        const item = dosya.testler[kayit.testIndex]?.sorular[kayit.soruIndex]
+        const item = (dosya.legacyTestler ?? dosya.testler)[kayit.testIndex]?.sorular[kayit.soruIndex]
         if (item) setSoru(item)
         else setHata('Soru bulunamadı.')
       })

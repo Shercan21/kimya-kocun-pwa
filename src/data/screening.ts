@@ -42,7 +42,7 @@ export async function taramaHazirla(grade: number): Promise<TaramaSorusu[]> {
   const konular = tumKonular(grade).map(k => k.konu)
   const ids = new Set<string>()
   for (const k of konular) {
-    ids.add(k.test)
+    if (k.test) ids.add(k.test)
     k.baglam.forEach(b => ids.add(b.id))
   }
   const dosyalar = new Map<string, TestDosyasi>()

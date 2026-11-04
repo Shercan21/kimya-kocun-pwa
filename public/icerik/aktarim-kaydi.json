@@ -1,0 +1,102 @@
+{
+  "grades": {
+    "9": {
+      "activities": 150,
+      "topics": 29,
+      "lessons": 30,
+      "questions": 1447,
+      "testGroups": 79
+    },
+    "10": {
+      "activities": 107,
+      "topics": 21,
+      "lessons": 21,
+      "questions": 1119,
+      "testGroups": 64
+    },
+    "11": {
+      "activities": 129,
+      "topics": 25,
+      "lessons": 25,
+      "questions": 1340,
+      "testGroups": 80
+    }
+  },
+  "files": [
+    {
+      "name": "Kimya-Kocum-10-sinif-etkinlik-kitabi.docx",
+      "sha256": "ddfc7579a5f496f587851d8e7348a9929f5c9f9c3dafc881dbdf5101c6d29f40"
+    },
+    {
+      "name": "Kimya-Kocum-10-sinif-etkinlik-kitabi.pdf",
+      "sha256": "d5e103e79322bed21e38b62bcbeeb761945063a5634aadf7afbb6d3a756559e7"
+    },
+    {
+      "name": "Kimya-Kocum-10-sinif-konu-anlatimi.docx",
+      "sha256": "1c31e88fdc5e405b2397e11d5c2eb2f10eefdf0758a4be1e6f99389b70a0403b"
+    },
+    {
+      "name": "Kimya-Kocum-10-sinif-konu-anlatimi.pdf",
+      "sha256": "9154a795c4a41e9eeefe9439924c037a8c1fd79874b41c57dee012138f261c73"
+    },
+    {
+      "name": "Kimya-Kocum-10-sinif-soru-bankasi.docx",
+      "sha256": "18c0ec0bb7ee0805d162edd9eb183095bb048ee75c71d62fb11abf625449ee2f"
+    },
+    {
+      "name": "Kimya-Kocum-10-sinif-soru-bankasi.pdf",
+      "sha256": "96a2582ee0ed007399f063c16ef4995bcec962f562447e98c930fc97bb8c9a3f"
+    },
+    {
+      "name": "Kimya-Kocum-11-sinif-etkinlik-kitabi.docx",
+      "sha256": "107c875c7ff54d73c48960461568a3b7e8097c99ed238b089d8c99cb6c09962f"
+    },
+    {
+      "name": "Kimya-Kocum-11-sinif-etkinlik-kitabi.pdf",
+      "sha256": "4e7410c6de5b8572d2ca7d914ecc545a37e6fda3121df86e98b42a55998c56f2"
+    },
+    {
+      "name": "Kimya-Kocum-11-sinif-konu-anlatimi.docx",
+      "sha256": "d3edf675017415ed977cc10595fcd8ac95eb4636f7a94bbffd57f640600e784b"
+    },
+    {
+      "name": "Kimya-Kocum-11-sinif-konu-anlatimi.pdf",
+      "sha256": "76e19fcaa0e4710b0446b156baa9f4227ad5950a899e9fbd815a808b1c65448a"
+    },
+    {
+      "name": "Kimya-Kocum-11-sinif-soru-bankasi.docx",
+      "sha256": "46ff241622e1c882385319bf3e4e6397a78e1b43bf0ea1059883bdaf56953f41"
+    },
+    {
+      "name": "Kimya-Kocum-11-sinif-soru-bankasi.pdf",
+      "sha256": "f6eadf5c917b534863d7d413a0b03c66ef8216e3db23782209ac171581bde79d"
+    },
+    {
+      "name": "Kimya-Kocum-9-sinif-etkinlik-kitabi.docx",
+      "sha256": "7439127939ef278b487fdf1995aea97922568fac1ae889c05abe0b83f1811201"
+    },
+    {
+      "name": "Kimya-Kocum-9-sinif-etkinlik-kitabi.pdf",
+      "sha256": "713506d43062ba7c315b14c2b2ae832c212e6e349b3ef4661e565efaa4b097ba"
+    },
+    {
+      "name": "Kimya-Kocum-9-sinif-konu-anlatimi.docx",
+      "sha256": "b9478082724d7799a4211553d247b383984d2c0707778faddd6e5c58c28e59a4"
+    },
+    {
+      "name": "Kimya-Kocum-9-sinif-konu-anlatimi.pdf",
+      "sha256": "5767670f1cad07d481a2ec6fde2cbfbfdbb648a067644edde27caba1a9a8bcbd"
+    },
+    {
+      "name": "Kimya-Kocum-9-sinif-soru-bankasi.docx",
+      "sha256": "ecc0fcd85d754c023c144b56cf079edc06d282ad0c550e6695caf1e768e39f1e"
+    },
+    {
+      "name": "Kimya-Kocum-9-sinif-soru-bankasi.pdf",
+      "sha256": "e0c8819a7b049b9b12f78f9fee0f9424ce8e64f9b92114400b05e14267f50fed"
+    }
+  ],
+  "notes": [
+    "10. sınıf 1.1.4 etkinlik 4 cevap anahtarı kaynakta boş bırakılmıştır."
+  ]
+}

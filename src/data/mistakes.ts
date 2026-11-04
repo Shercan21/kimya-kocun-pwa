@@ -3,6 +3,7 @@
 // Hata nedeni tek bir cevaptan tahmin edilmez; öğrenciye sorulur.
 
 import { useSyncExternalStore } from 'react'
+import type { Soru } from './content'
 
 export type HataNedeni =
   | 'bilgi' // bilgi eksikliği
@@ -35,6 +36,7 @@ export type HataKaydi = {
   neden: HataNedeni | null
   ilkTarih: string
   sonTarih: string
+  soru?: Soru
 }
 
 const KEY = 'kimya-kocun-pwa-hata-defteri-v1'
@@ -77,8 +79,8 @@ export function useHataDefteri() {
   )
 }
 
-export function hataKaydiKey(grade: number, testId: string, testIndex: number, soruIndex: number) {
-  return `${grade}|${testId}|${testIndex}|${soruIndex}`
+export function hataKaydiKey(grade: number, testId: string, testIndex: number, soruIndex: number, soruId?: string) {
+  return `${grade}|${testId}|${testIndex}|${soruId ?? soruIndex}`
 }
 
 export function acikHatalar(grades: number[]) {
@@ -94,12 +96,13 @@ export function testSonucunuIsle(params: {
   konuKod: string | null
   testBaslik: string
   dogruCevaplar: number[]
+  sorular?: Soru[]
   cevaplar: Record<number, number>
 }) {
   const now = new Date().toISOString()
   const list = [...read()]
   params.dogruCevaplar.forEach((dogru, soruIndex) => {
-    const key = hataKaydiKey(params.grade, params.testId, params.testIndex, soruIndex)
+    const key = hataKaydiKey(params.grade, params.testId, params.testIndex, soruIndex, params.sorular?.[soruIndex]?.id)
     const index = list.findIndex(item => item.key === key)
     const verilen = params.cevaplar[soruIndex]
     const bos = verilen === undefined
@@ -121,6 +124,7 @@ export function testSonucunuIsle(params: {
     if (index >= 0) {
       list[index] = {
         ...list[index],
+        soru: params.sorular?.[soruIndex] ?? list[index].soru,
         tur: bos ? 'bos' : 'yanlis',
         verilen: bos ? null : verilen,
         yanlisSayisi: list[index].yanlisSayisi + 1,
@@ -130,6 +134,7 @@ export function testSonucunuIsle(params: {
       }
     } else {
       list.push({
+        soru: params.sorular?.[soruIndex],
         key,
         grade: params.grade,
         testId: params.testId,
