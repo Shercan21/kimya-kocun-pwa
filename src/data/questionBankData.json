@@ -1,0 +1,293 @@
+{
+  "version": 1,
+  "application": "Kimya Koçun",
+  "exportedAt": "2026-11-01T18:26:22.573Z",
+  "questionCount": 16,
+  "questions": [
+    {
+      "id": "77103835-88b9-5651-ac2d-e73387579249",
+      "grade": 11,
+      "topicId": "37775c9c-4373-40a6-b2df-88412a1ba774",
+      "type": "multiple_choice",
+      "question": "Atom numarası 17, kütle numarası 35 olan nötr bir atomda proton, nötron ve elektron sayıları sırasıyla kaçtır?",
+      "choices": {
+        "A": "17, 18, 17",
+        "B": "17, 35, 17",
+        "C": "18, 17, 18",
+        "D": "35, 17, 35",
+        "E": "17, 18, 18"
+      },
+      "correctAnswer": "A",
+      "explanation": "Proton sayısı 17, nötron sayısı 35−17=18, nötr atomda elektron sayısı 17’dir.",
+      "maxPoints": 20
+    },
+    {
+      "id": "fcbc96f7-6ae6-53d0-b390-c444bb84b495",
+      "grade": 11,
+      "topicId": "37775c9c-4373-40a6-b2df-88412a1ba774",
+      "type": "multiple_choice",
+      "question": "Bir atomun temel hâl elektron dizilimi 1s² 2s² 2p⁶ 3s¹ şeklindedir. Bu atomun atom numarası kaçtır?",
+      "choices": {
+        "A": "10",
+        "B": "11",
+        "C": "12",
+        "D": "13",
+        "E": "19"
+      },
+      "correctAnswer": "B",
+      "explanation": "Elektron sayısı 2+2+6+1=11’dir. Nötr atomun atom numarası 11’dir.",
+      "maxPoints": 20
+    },
+    {
+      "id": "5de12832-e704-5256-9781-c97ae1cf5907",
+      "grade": 11,
+      "topicId": "37775c9c-4373-40a6-b2df-88412a1ba774",
+      "type": "multiple_choice",
+      "question": "Aşağıdaki orbital türlerinden hangisinin bir alt kabukta en fazla 10 elektron bulundurma kapasitesi vardır?",
+      "choices": {
+        "A": "s",
+        "B": "p",
+        "C": "d",
+        "D": "f",
+        "E": "Hiçbiri"
+      },
+      "correctAnswer": "C",
+      "explanation": "d alt kabuğunda 5 orbital bulunur. Her orbital en fazla 2 elektron alabildiğinden kapasitesi 10 elektrondur.",
+      "maxPoints": 20
+    },
+    {
+      "id": "d3926ef1-0f50-5b34-87a8-c98cc4f832e3",
+      "grade": 11,
+      "topicId": "37775c9c-4373-40a6-b2df-88412a1ba774",
+      "type": "multiple_choice",
+      "question": "Aynı elementin iki izotop atomu için aşağıdakilerden hangisi kesinlikle aynıdır?",
+      "choices": {
+        "A": "Nötron sayısı",
+        "B": "Kütle numarası",
+        "C": "Proton sayısı",
+        "D": "Nükleon sayısı",
+        "E": "Atom kütlesi"
+      },
+      "correctAnswer": "C",
+      "explanation": "İzotopların proton sayıları aynıdır; nötron sayıları ve kütle numaraları farklıdır.",
+      "maxPoints": 20
+    },
+    {
+      "id": "fc3a48ed-9cad-5271-a097-15e9a46fd7a9",
+      "grade": 11,
+      "topicId": "37775c9c-4373-40a6-b2df-88412a1ba774",
+      "type": "multiple_choice",
+      "question": "Bir elektronun baş kuantum sayısı n=3 ise açısal momentum kuantum sayısı (ℓ) aşağıdakilerden hangisi olabilir?",
+      "choices": {
+        "A": "Yalnız 3",
+        "B": "0, 1 ve 2",
+        "C": "1, 2 ve 3",
+        "D": "0, 1, 2 ve 3",
+        "E": "Yalnız 2"
+      },
+      "correctAnswer": "B",
+      "explanation": "ℓ, 0 ile n−1 arasında tam sayı değerleri alır. n=3 için 0, 1 ve 2 mümkündür.",
+      "maxPoints": 20
+    },
+    {
+      "id": "b9c1fb3b-4e4c-5c8b-9caa-278fcd3724ea",
+      "grade": 11,
+      "topicId": "37775c9c-4373-40a6-b2df-88412a1ba774",
+      "type": "multiple_choice",
+      "question": "Periyodik tabloda aynı grupta yukarıdan aşağıya doğru inildikçe atom yarıçapı genel olarak nasıl değişir?",
+      "choices": {
+        "A": "Azalır",
+        "B": "Değişmez",
+        "C": "Önce azalır sonra artar",
+        "D": "Artar",
+        "E": "Sıfıra yaklaşır"
+      },
+      "correctAnswer": "D",
+      "explanation": "Aşağıya inildikçe elektron katmanı sayısı arttığından atom yarıçapı genel olarak artar.",
+      "maxPoints": 20
+    },
+    {
+      "id": "347a953c-3bb9-5d4e-8bd1-f2eaf2428b79",
+      "grade": 11,
+      "topicId": "37775c9c-4373-40a6-b2df-88412a1ba774",
+      "type": "multiple_choice",
+      "question": "Aşağıdaki elementlerden hangisi 3. periyotta ve 17. gruptadır?",
+      "choices": {
+        "A": "Na",
+        "B": "Mg",
+        "C": "Al",
+        "D": "S",
+        "E": "Cl"
+      },
+      "correctAnswer": "E",
+      "explanation": "Klor (Cl) 3. periyotta bulunan bir halojendir ve 17. gruptadır.",
+      "maxPoints": 20
+    },
+    {
+      "id": "2c83fdee-90cd-51c1-8e82-75ddae252046",
+      "grade": 11,
+      "topicId": "37775c9c-4373-40a6-b2df-88412a1ba774",
+      "type": "multiple_choice",
+      "question": "Aynı periyotta soldan sağa doğru gidildikçe birinci iyonlaşma enerjisi için genel eğilim hangisidir?",
+      "choices": {
+        "A": "Artar",
+        "B": "Azalır",
+        "C": "Her zaman sabit kalır",
+        "D": "Sıfır olur",
+        "E": "Atom numarasından bağımsızdır"
+      },
+      "correctAnswer": "A",
+      "explanation": "Etkin çekirdek çekimi genel olarak arttığı için birinci iyonlaşma enerjisi genel eğilim olarak artar; istisnalar vardır.",
+      "maxPoints": 20
+    },
+    {
+      "id": "b39aecdd-dae1-5401-afca-6dc13eefddf3",
+      "grade": 11,
+      "topicId": "37775c9c-4373-40a6-b2df-88412a1ba774",
+      "type": "multiple_choice",
+      "question": "Aşağıdaki elementlerden hangisinin elektronegatifliği en yüksektir?",
+      "choices": {
+        "A": "Li",
+        "B": "C",
+        "C": "N",
+        "D": "O",
+        "E": "F"
+      },
+      "correctAnswer": "E",
+      "explanation": "Flor (F), Pauling ölçeğinde elektronegatifliği en yüksek elementtir.",
+      "maxPoints": 20
+    },
+    {
+      "id": "ac69b942-6b2a-5e01-b158-bd7d1d64be2b",
+      "grade": 11,
+      "topicId": "37775c9c-4373-40a6-b2df-88412a1ba774",
+      "type": "multiple_choice",
+      "question": "Atom numarası 12 olan nötr Mg atomunun oluşturduğu Mg²⁺ iyonunda kaç elektron bulunur?",
+      "choices": {
+        "A": "10",
+        "B": "11",
+        "C": "12",
+        "D": "13",
+        "E": "14"
+      },
+      "correctAnswer": "A",
+      "explanation": "Nötr Mg atomunda 12 elektron vardır. Mg²⁺ oluşurken 2 elektron verdiğinden 10 elektron kalır.",
+      "maxPoints": 20
+    },
+    {
+      "id": "atom-remedial-001",
+      "grade": 11,
+      "topicId": "37775c9c-4373-40a6-b2df-88412a1ba774",
+      "relatedQuestionId": "77103835-88b9-5651-ac2d-e73387579249",
+      "type": "multiple_choice",
+      "question": "Atom numarası 15, kütle numarası 31 olan nötr bir atomun nötron sayısı kaçtır?",
+      "choices": {
+        "A": "15",
+        "B": "16",
+        "C": "31",
+        "D": "46",
+        "E": "14"
+      },
+      "correctAnswer": "B",
+      "explanation": "Nötron sayısı = kütle numarası − proton sayısı = 31 − 15 = 16.",
+      "maxPoints": 20
+    },
+    {
+      "id": "atom-remedial-002",
+      "grade": 11,
+      "topicId": "37775c9c-4373-40a6-b2df-88412a1ba774",
+      "relatedQuestionId": "fcbc96f7-6ae6-53d0-b390-c444bb84b495",
+      "type": "multiple_choice",
+      "question": "Temel hâl elektron dizilimi 1s² 2s² 2p⁶ 3s² olan nötr atomun atom numarası kaçtır?",
+      "choices": {
+        "A": "10",
+        "B": "11",
+        "C": "12",
+        "D": "13",
+        "E": "14"
+      },
+      "correctAnswer": "C",
+      "explanation": "Toplam elektron sayısı 2+2+6+2=12'dir. Nötr atomun atom numarası 12'dir.",
+      "maxPoints": 20
+    },
+    {
+      "id": "atom-remedial-003",
+      "grade": 11,
+      "topicId": "37775c9c-4373-40a6-b2df-88412a1ba774",
+      "relatedQuestionId": "5de12832-e704-5256-9781-c97ae1cf5907",
+      "type": "multiple_choice",
+      "question": "Bir p alt kabuğunda en fazla kaç elektron bulunabilir?",
+      "choices": {
+        "A": "2",
+        "B": "4",
+        "C": "6",
+        "D": "10",
+        "E": "14"
+      },
+      "correctAnswer": "C",
+      "explanation": "p alt kabuğunda 3 orbital vardır. Her orbital en fazla 2 elektron alabildiğinden toplam kapasite 6 elektrondur.",
+      "maxPoints": 20
+    },
+    {
+      "id": "atom-remedial-004",
+      "grade": 11,
+      "topicId": "37775c9c-4373-40a6-b2df-88412a1ba774",
+      "relatedQuestionId": "77103835-88b9-5651-ac2d-e73387579249",
+      "type": "multiple_choice",
+      "question": "Atom numarası 13 ve kütle numarası 27 olan nötr bir atomda proton, nötron ve elektron sayıları sırasıyla kaçtır?",
+      "choices": {
+        "A": "13, 13, 14",
+        "B": "14, 13, 13",
+        "C": "13, 14, 13",
+        "D": "27, 13, 14",
+        "E": "13, 27, 13"
+      },
+      "correctAnswer": "C",
+      "explanation": "Proton sayısı atom numarası olan 13’tür. Nötron sayısı 27 − 13 = 14, nötr atomda elektron sayısı 13’tür.",
+      "maxPoints": 20
+    },
+    {
+      "id": "atom-remedial-005",
+      "grade": 11,
+      "topicId": "37775c9c-4373-40a6-b2df-88412a1ba774",
+      "relatedQuestionId": "fcbc96f7-6ae6-53d0-b390-c444bb84b495",
+      "type": "multiple_choice",
+      "question": "Nötr bir atomun temel hâl elektron dizilimi 1s² 2s² 2p⁶ 3s² 3p² olduğuna göre atom numarası kaçtır?",
+      "choices": {
+        "A": "12",
+        "B": "13",
+        "C": "14",
+        "D": "15",
+        "E": "16"
+      },
+      "correctAnswer": "C",
+      "explanation": "Elektron sayısı 2 + 2 + 6 + 2 + 2 = 14’tür. Nötr atomda atom numarası elektron sayısına eşittir.",
+      "maxPoints": 20
+    },
+    {
+      "id": "atom-remedial-006",
+      "grade": 11,
+      "topicId": "37775c9c-4373-40a6-b2df-88412a1ba774",
+      "relatedQuestionId": "5de12832-e704-5256-9781-c97ae1cf5907",
+      "type": "multiple_choice",
+      "question": "Bir f alt kabuğunda toplam kaç orbital bulunur ve en fazla kaç elektron yer alabilir?",
+      "choices": {
+        "A": "3 orbital, 6 elektron",
+        "B": "5 orbital, 10 elektron",
+        "C": "7 orbital, 14 elektron",
+        "D": "7 orbital, 7 elektron",
+        "E": "14 orbital, 28 elektron"
+      },
+      "correctAnswer": "C",
+      "explanation": "f alt kabuğunda 7 orbital vardır. Her orbital en fazla 2 elektron alır; toplam kapasite 14 elektrondur.",
+      "maxPoints": 20
+    }
+  ],
+  "topics": [
+    {
+      "id": "37775c9c-4373-40a6-b2df-88412a1ba774",
+      "grade": 11,
+      "title": "Modern Atom Teorisi"
+    }
+  ]
+}

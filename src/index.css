@@ -1,0 +1,74 @@
+:root {
+  /* Renkler: mor ana renk, turkuaz yalnızca başarı/doğru için */
+  --purple-50: #eeedfe;
+  --purple-100: #cecbf6;
+  --purple-400: #7f77dd;
+  --purple-600: #534ab7;
+  --purple-800: #3c3489;
+  --teal-50: #e1f5ee;
+  --teal-400: #1d9e75;
+  --teal-600: #0f6e56;
+  --amber-50: #faeeda;
+  --amber-400: #ef9f27;
+  --amber-800: #854f0b;
+  --coral-50: #faece7;
+  --coral-600: #993c1d;
+  --gray-50: #f1efe8;
+  --gray-200: #b4b2a9;
+  --gray-600: #5f5e5a;
+
+  --bg: #f7f6f3;
+  --surface: #ffffff;
+  --line: #e7e5df;
+  --text: #252447;
+  --text-2: #6b6a75;
+
+  --radius: 10px;
+  --radius-card: 16px;
+
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color: var(--text);
+  background: var(--bg);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100%;
+}
+
+#root {
+  width: 100%;
+  min-height: 100vh;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+:focus-visible {
+  outline: 2px solid var(--purple-400);
+  outline-offset: 2px;
+}

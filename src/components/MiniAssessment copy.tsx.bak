@@ -1,0 +1,171 @@
+import { useState } from 'react'
+import {
+  getTopicQuestions, getTopicAttempts, getMainAssessmentQuestions,
+  getFreshMainQuestions, getFreshRemedialQuestions,
+  startAssessment, saveAssessmentAnswer, submitAssessment,
+  type AssessmentQuestion, type AssessmentAttempt, type AssessmentPurpose,
+} from '../data/learningAssessment'
+import { getTopicProgress, setTopicProgress } from '../data/learningProgress'
+
+type Props = { grade: number; topicId: string; topicTitle: string; purpose?: AssessmentPurpose }
+const errorText = (e: unknown) => e instanceof Error ? e.message : 'Beklenmeyen bir hata oluştu.'
+
+export default function MiniAssessment({ grade, topicId, topicTitle, purpose = 'learning' }: Props) {
+  const [questions] = useState(() => getTopicQuestions(grade, topicId))
+  const [attempts, setAttempts] = useState(() => getTopicAttempts(grade, topicId))
+  const [attempt, setAttempt] = useState<AssessmentAttempt | null>(() =>
+    [...getTopicAttempts(grade, topicId)].reverse().find(a => a.purpose === purpose) ?? null)
+  const [index, setIndex] = useState(0)
+  const [message, setMessage] = useState('')
+  const [showMistakes, setShowMistakes] = useState(false)
+  const [showRemedial, setShowRemedial] = useState(false)
+  const [remedialAnswers, setRemedialAnswers] = useState<Record<string, string>>({})
+  const [showRemedialMistakes, setShowRemedialMistakes] = useState(false)
+  const [progressStatus, setProgressStatus] = useState(() => getTopicProgress(grade, topicId)?.status)
+
+  const refresh = () => setAttempts(getTopicAttempts(grade, topicId))
+  const allQuestions = (ids: string[]) => ids.map(id => questions.find(q => q.id === id)).filter((q): q is AssessmentQuestion => !!q)
+  const active = attempt ? allQuestions(attempt.questionIds) : []
+  const current = active[index]
+  const answerFor = (id: string) => attempt?.answers.find(a => a.questionId === id)?.studentAnswer ?? ''
+  const completed = active.filter(q => answerFor(q.id).trim()).length
+  const remedials = attempts.filter(a => a.purpose === 'remedial' && a.status === 'completed')
+  const lastRemedial = remedials[remedials.length - 1] ?? null
+  const initialRemedial = remedials.find(a => (a.remedialStage ?? 1) === 1)
+  const secondRemedial = remedials.find(a => a.remedialStage === 2)
+  const mainFailed = attempt?.status === 'completed' && attempt.passed === false
+  const mainWrong = mainFailed ? attempt.answers.filter(a => a.isCorrect === false).map(a => a.questionId) : []
+  const firstWrong = initialRemedial?.answers.filter(a => a.isCorrect === false).map(a => a.questionId) ?? []
+  const secondWrong = secondRemedial?.answers.filter(a => a.isCorrect === false).map(a => a.questionId) ?? []
+  const nextStage = initialRemedial ? (secondRemedial ? 0 : 2) : 1
+  const wrongForNext = nextStage === 1 ? mainWrong : [...new Set([...mainWrong, ...firstWrong.map(id => questions.find(q => q.id === id)?.relatedQuestionId ?? id)])]
+  const freshRemedial = getFreshRemedialQuestions(grade, topicId, wrongForNext, 3)
+  const freshMain = getFreshMainQuestions(grade, topicId, 5)
+  const isFollowUp = !!attempts.find(a => a.purpose === purpose && a.status === 'completed' && a.id !== attempt?.id)
+  const canReassess = !!attempt && attempt.status === 'completed' && !attempt.passed && (
+    (secondRemedial?.status === 'completed') || (initialRemedial?.passed === true)
+  )
+
+  function startNew(isRetry = false) {
+    setMessage('')
+    const selected = isRetry ? getFreshMainQuestions(grade, topicId, 5) :
+      getMainAssessmentQuestions(grade, topicId).slice(0, 5)
+    if (selected.length < 5) {
+      setMessage(`Yeni değerlendirme için 5 farklı ana soru gerekiyor. Kullanılabilir: ${selected.length}.`)
+      return
+    }
+    try {
+      const created = startAssessment(grade, topicId, topicTitle, purpose, selected.map(q => q.id))
+      setAttempt(created); setIndex(0); setShowMistakes(false); setShowRemedial(false); refresh()
+    } catch (e) { setMessage(errorText(e)) }
+  }
+
+  function updateAnswer(id: string, value: string) {
+    if (!attempt) return
+    try { setAttempt(saveAssessmentAnswer(attempt.id, id, value)); setMessage('') }
+    catch (e) { setMessage(errorText(e)) }
+  }
+
+  function finish() {
+    if (!attempt) return
+    try {
+      const result = submitAssessment(attempt.id)
+      setAttempt(result); refresh()
+      if (result.status === 'completed' && result.passed && purpose === 'learning') {
+        const existing = getTopicProgress(grade, topicId)
+        if (existing?.status !== 'permanent') {
+          setTopicProgress(grade, topicId, topicTitle, 'learned')
+          setProgressStatus('learned')
+        }
+        setMessage('Değerlendirme başarılı. Konu Öğrenildi olarak kaydedildi.')
+      } else {
+        setMessage(result.status === 'pending_review' ? 'Yanıtların kaydedildi; değerlendirme bekleniyor.' : 'Değerlendirme tamamlandı.')
+      }
+    } catch (e) { setMessage(errorText(e)) }
+  }
+
+  function finishRemedial() {
+    if (freshRemedial.length === 0 || freshRemedial.some(q => !remedialAnswers[q.id])) return
+    try {
+      const created = startAssessment(grade, topicId, topicTitle, 'remedial', freshRemedial.map(q => q.id), nextStage)
+      for (const q of freshRemedial) saveAssessmentAnswer(created.id, q.id, remedialAnswers[q.id])
+      const result = submitAssessment(created.id)
+      refresh(); setRemedialAnswers({}); setShowRemedialMistakes(false)
+      setMessage(result.status === 'completed' ? `Pekiştirme ${nextStage} tamamlandı: %${result.successRate}.` : 'Pekiştirme değerlendirmesi bekleniyor.')
+    } catch (e) { setMessage(errorText(e)) }
+  }
+
+  const renderAnswer = (q: AssessmentQuestion, value: string) => q.choices?.[value] ? `${value}) ${q.choices[value]}` : value
+  const wrongCards = (a: AssessmentAttempt) => {
+    const wrong = allQuestions(a.questionIds).filter(q => a.answers.some(ans => ans.questionId === q.id && ans.isCorrect === false))
+    return wrong.length ? wrong.map(q => {
+      const given = a.answers.find(ans => ans.questionId === q.id)?.studentAnswer ?? ''
+      return <div key={q.id} style={{ background: '#fff', padding: 12, border: '1px solid #ddd', borderRadius: 8, margin: '10px 0' }}>
+        <p><strong>Soru:</strong> {q.question}</p>
+        <p><strong>Senin cevabın:</strong> {renderAnswer(q, given)}</p>
+        <p><strong>Doğru cevap:</strong> {renderAnswer(q, q.correctAnswer ?? '')}</p>
+        <p><strong>Kısa konu açıklaması:</strong> {q.explanation || 'Bu soru için açıklama henüz eklenmedi.'}</p>
+      </div>
+    }) : <p>Yanlış cevap bulunmuyor.</p>
+  }
+
+  const options = (q: AssessmentQuestion, value: string, onChange: (v: string) => void) => {
+    if (q.type === 'multiple_choice') return Object.entries(q.choices ?? {}).map(([key, label]) =>
+      <label key={key} style={{ display: 'block', marginBottom: 10 }}><input type="radio" name={`q-${q.id}`} checked={value === key} onChange={() => onChange(key)} /> {key}) {label}</label>)
+    if (q.type === 'true_false') return [['true', 'Doğru'], ['false', 'Yanlış']].map(([key, label]) =>
+      <label key={key} style={{ display: 'block', marginBottom: 10 }}><input type="radio" name={`q-${q.id}`} checked={value === key} onChange={() => onChange(key)} /> {label}</label>)
+    return <textarea rows={q.type === 'open_ended' ? 6 : 2} value={value} onChange={e => onChange(e.target.value)} style={{ width: '100%' }} />
+  }
+
+  return <section style={{ padding: 18, marginTop: 16, borderRadius: 14, background: '#f5f3ff' }}>
+    <h3>🧪 Mini Değerlendirme</h3>
+    <p>Konu: {topicTitle}</p>
+    {progressStatus === 'learned' || progressStatus === 'permanent' ? <p>✅ Öğrenme durumu: {progressStatus === 'permanent' ? 'Kalıcı' : 'Öğrenildi'}</p> : null}
+    {message && <p role="status" style={{ color: '#6541a5' }}>{message}</p>}
+    {!attempt && <><p>Bu konu için {getMainAssessmentQuestions(grade, topicId).length} ana soru var.</p><button type="button" onClick={() => startNew()}>▶ Değerlendirmeye Başla</button></>}
+    {attempt?.status === 'pending_review' && <p>⏳ Değerlendirme gönderildi. Sonuç bekleniyor.</p>}
+    {attempt?.status === 'in_progress' && <>
+      <p>Cevaplanan: {completed} / {active.length}</p>
+      {current ? <><h4>Soru {index + 1} / {active.length}</h4><p>{current.question}</p>
+        {options(current, answerFor(current.id), v => updateAnswer(current.id, v))}
+        <div style={{ display: 'flex', gap: 10, marginTop: 18, flexWrap: 'wrap' }}>
+          <button type="button" disabled={index === 0} onClick={() => setIndex(i => i - 1)}>← Önceki</button>
+          <button type="button" disabled={index >= active.length - 1} onClick={() => setIndex(i => i + 1)}>Sonraki →</button>
+          <button type="button" disabled={completed !== active.length || active.length !== attempt.questionIds.length} onClick={finish}>✓ Değerlendirmeyi Gönder</button>
+        </div></> : <p>Değerlendirme soruları yüklenemedi.</p>}
+    </>}
+    {attempt?.status === 'completed' && <div style={{ marginTop: 16, padding: 18, background: '#e9f8f4', borderRadius: 12 }}>
+      <h3>📊 Değerlendirme Sonucun</h3>
+      <p><strong>Toplam Puan:</strong> {attempt.earnedPoints} / {attempt.totalPoints}</p>
+      <p><strong>Başarı Oranı:</strong> %{attempt.successRate}</p>
+      <p><strong>Sonuç:</strong> {attempt.passed ? '✅ Başarılı' : '📘 Tekrar çalışman gerekiyor'}</p>
+      <button type="button" onClick={() => setShowMistakes(v => !v)}>{showMistakes ? '✖ İncelemeyi Kapat' : '🔍 Yanlışlarımı İncele'}</button>
+      {showMistakes && wrongCards(attempt)}
+      {mainFailed && <div style={{ marginTop: 16 }}>
+        <h4>🧠 Eksik Öğrenme Tamamlama</h4>
+        {remedials.map((r, i) => <div key={r.id} style={{ margin: '12px 0', padding: 12, background: '#fff', borderRadius: 8 }}>
+          <p><strong>{r.remedialStage ?? (i + 1)}. pekiştirme:</strong> %{r.successRate} — {r.passed ? 'Başarılı' : 'Tekrar gerekli'}</p>
+          <button type="button" onClick={() => setShowRemedialMistakes(v => !v)}>{showRemedialMistakes ? 'İncelemeyi Kapat' : 'Pekiştirme Yanlışlarını İncele'}</button>
+          {showRemedialMistakes && r.id === lastRemedial?.id && wrongCards(r)}
+        </div>)}
+        {nextStage > 0 && (nextStage === 1 || initialRemedial?.passed === false) && <>
+          <p>{nextStage}. pekiştirme için {freshRemedial.length} yeni soru mevcut.</p>
+          {freshRemedial.length < 3 && <p>Not: Bu aşama için 3 yeni bağlantılı soru önerilir. Eksik sorular soru havuzuna eklenmelidir.</p>}
+          {freshRemedial.length > 0 && <button type="button" onClick={() => setShowRemedial(v => !v)}>{showRemedial ? '✖ Pekiştirmeyi Kapat' : `🧠 ${nextStage}. Pekiştirmeye Başla`}</button>}
+          {showRemedial && freshRemedial.map((q, i) => <div key={q.id} style={{ padding: 12, background: '#fff', margin: '10px 0', borderRadius: 8 }}>
+            <p><strong>Soru {i + 1}:</strong> {q.question}</p>
+            {options(q, remedialAnswers[q.id] ?? '', v => setRemedialAnswers(prev => ({ ...prev, [q.id]: v })))}
+          </div>)}
+          {showRemedial && freshRemedial.length > 0 && <button type="button" disabled={freshRemedial.some(q => !remedialAnswers[q.id]?.trim())} onClick={finishRemedial}>✓ Pekiştirmeyi Tamamla</button>}
+        </>}
+        {nextStage === 0 && secondWrong.length > 0 && <p>İkinci pekiştirmede de eksikler var. Açıklamaları incele ve yeni sorular eklenmesini bekle.</p>}
+        {canReassess && <div style={{ marginTop: 16 }}>
+          <p>Yeni öğrenme değerlendirmesi: {freshMain.length} / 5 kullanılmamış ana soru.</p>
+          <button type="button" disabled={freshMain.length < 5} onClick={() => startNew(true)}>🔄 Yeni Sorularla Tekrar Değerlendir</button>
+          {freshMain.length < 5 && <p>Beş yeni ana soru eklenmeden yeniden değerlendirme başlatılamaz.</p>}
+        </div>}
+      </div>}
+      {isFollowUp && <p>Önceki değerlendirme sonuçların kayıtlıdır.</p>}
+    </div>}
+  </section>
+}
