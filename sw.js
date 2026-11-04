@@ -1,0 +1,111 @@
+// Kimya Koçun service worker
+// Sayfalar: önce ağ, ağ yoksa önbellek (güncel içerik + çevrimdışı açılış).
+// /assets/ dosyaları: önce önbellek (adları içerik özetli, değişmez).
+// Yeni sürüm yayımlarken CACHE adını değiştirmek eski önbelleği temizler.
+
+const CACHE = 'kimya-kocun-pwa-v1'
+// Yollar service worker'ın bulunduğu klasöre göre çözülür; böylece uygulama
+// hem alan adının kökünde hem de /kimya-kocun-pwa/ gibi bir alt yolda çalışır.
+const BASE = new URL('./', self.location).pathname
+const INDEX = BASE + 'index.html'
+const APP_SHELL = [
+  BASE + "assets/CoachPage-B2zsGj6S.js",
+  BASE + "assets/content-CCZCHN3D.js",
+  BASE + "assets/driveSync-BnyAANTi.js",
+  BASE + "assets/ExamsPage-C9XngShR.js",
+  BASE + "assets/index-DExXwCGT.js",
+  BASE + "assets/index-DuJxg_tj.css",
+  BASE + "assets/MistakeBook-5_BHFpy8.js",
+  BASE + "assets/PracticePage-BOVN3oW9.js",
+  BASE + "assets/ProgramPage-CzvBRPnI.js",
+  BASE + "assets/QuestionBankManager-CSApNDfQ.js",
+  BASE + "assets/react-CKDqjp4T.js",
+  BASE + "assets/rolldown-runtime-DN1TCW_I.js",
+  BASE + "assets/ScreeningPage-C-GlgGiE.js",
+  BASE + "assets/TestRunner-BZvobTQo.js",
+  BASE + "assets/TopicPage-CilysTWp.js",
+  BASE,
+  INDEX,
+  BASE + 'manifest.webmanifest',
+  BASE + 'icon.svg',
+  BASE + 'icon-192.png',
+  BASE + 'icon-512.png',
+]
+
+self.addEventListener('install', event => {
+  event.waitUntil(
+    caches.open(CACHE).then(cache => cache.addAll(APP_SHELL))
+  )
+  self.skipWaiting()
+})
+
+self.addEventListener('activate', event => {
+  event.waitUntil(
+    caches.keys().then(keys =>
+      Promise.all(
+        keys
+          .filter(key => key.startsWith('kimya-kocun-pwa-') && key !== CACHE)
+          .map(key => caches.delete(key))
+      )
+    )
+  )
+  self.clients.claim()
+})
+
+self.addEventListener('fetch', event => {
+  const { request } = event
+  if (request.method !== 'GET') return
+
+  const url = new URL(request.url)
+  if (url.origin !== self.location.origin) return
+
+  // Sayfa açılışları
+  if (request.mode === 'navigate') {
+    event.respondWith(
+      fetch(request)
+        .then(response => {
+          const copy = response.clone()
+          caches.open(CACHE).then(cache => cache.put(INDEX, copy))
+          return response
+        })
+        .catch(() =>
+          caches.match(INDEX).then(cached => cached || caches.match(BASE))
+        )
+    )
+    return
+  }
+
+  // Konu anlatımı, test ve etkinlikler: önbellekten hemen göster,
+  // arkada ağdan güncelle (çevrimdışıyken daha önce açılanlar çalışır).
+  if (url.pathname.startsWith(BASE + 'icerik/')) {
+    event.respondWith(
+      caches.open(CACHE).then(cache =>
+        cache.match(request).then(cached => {
+          const network = fetch(request)
+            .then(response => {
+              if (response.ok) cache.put(request, response.clone())
+              return response
+            })
+            .catch(() => cached)
+          return cached || network
+        })
+      )
+    )
+    return
+  }
+
+  // Derlenmiş JS/CSS ve diğer statik dosyalar
+  event.respondWith(
+    caches.match(request).then(
+      cached =>
+        cached ||
+        fetch(request).then(response => {
+          if (response.ok && (url.pathname.startsWith(BASE + 'assets/') || APP_SHELL.includes(url.pathname))) {
+            const copy = response.clone()
+            caches.open(CACHE).then(cache => cache.put(request, copy))
+          }
+          return response
+        })
+    )
+  )
+})
