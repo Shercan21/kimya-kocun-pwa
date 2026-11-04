@@ -22,3 +22,10 @@ test('Already scheduled review is not planned again next week',()=>{const r=plan
 test('Every curriculum topic has a detailed illustrated lesson',()=>{const m=JSON.parse(fs.readFileSync('src/data/mufredat.json','utf8'));for(const [g,d] of Object.entries(m)){const details=JSON.parse(fs.readFileSync('public/icerik/'+g+'/anlatim-detay.json','utf8'));for(const t of d.temalar)for(const b of t.bolumler)for(const k of b.konular)assert.ok(details[k.kod]?.length>100,k.kod+' missing detailed lesson')}});
 test('All nine original study books are accessible',()=>{for(const g of [9,10,11])for(const kind of ['konu-anlatimi','etkinlik-kitabi','soru-bankasi'])assert.ok(fs.existsSync('public/kitaplar/Kimya-Kocum-'+g+'-sinif-'+kind+'.pdf'))});
 console.log(passed+' checks passed');
+
+const manifest=JSON.parse(fs.readFileSync('public/manifest.webmanifest','utf8'));
+assert.equal(manifest.name,'Kimya Koçun');
+assert.equal(manifest.short_name,'Kimya Koçun');
+assert.equal(manifest.id,'/kimya-kocun-pwa/');
+assert.notEqual(new URL(manifest.id,'https://shercan21.github.io/').href,'https://shercan21.github.io/');
+console.log('OK App display name and separate installation identity');

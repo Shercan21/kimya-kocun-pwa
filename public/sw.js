@@ -3,7 +3,7 @@
 // /assets/ dosyaları: önce önbellek (adları içerik özetli, değişmez).
 // Yeni sürüm yayımlarken CACHE adını değiştirmek eski önbelleği temizler.
 
-const CACHE = 'kimya-kocun-pwa-v1'
+const CACHE = 'kimya-kocun-pwa-v2'
 // Yollar service worker'ın bulunduğu klasöre göre çözülür; böylece uygulama
 // hem alan adının kökünde hem de /kimya-kocun-pwa/ gibi bir alt yolda çalışır.
 const BASE = new URL('./', self.location).pathname
