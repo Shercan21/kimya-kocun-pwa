@@ -3,27 +3,27 @@
 // /assets/ dosyaları: önce önbellek (adları içerik özetli, değişmez).
 // Yeni sürüm yayımlarken CACHE adını değiştirmek eski önbelleği temizler.
 
-const CACHE = 'kimya-kocun-pwa-v2'
+const CACHE = 'kimya-kocun-pwa-v4'
 // Yollar service worker'ın bulunduğu klasöre göre çözülür; böylece uygulama
 // hem alan adının kökünde hem de /kimya-kocun-pwa/ gibi bir alt yolda çalışır.
 const BASE = new URL('./', self.location).pathname
 const INDEX = BASE + 'index.html'
 const APP_SHELL = [
-  BASE + "assets/CoachPage-9t-xNQL9.js",
-  BASE + "assets/content-CCZCHN3D.js",
-  BASE + "assets/driveSync-B8EUAaMc.js",
-  BASE + "assets/ExamsPage-4rScLSYE.js",
-  BASE + "assets/index-DcmeB1Ad.js",
+  BASE + "assets/CoachPage-GbbDwRqg.js",
+  BASE + "assets/content-cY2eUw2P.js",
+  BASE + "assets/driveSync-Dkvgp5Vp.js",
+  BASE + "assets/ExamsPage-CirsJs6R.js",
   BASE + "assets/index-DuJxg_tj.css",
-  BASE + "assets/MistakeBook-D_Aql39c.js",
-  BASE + "assets/PracticePage-CmjWad0S.js",
-  BASE + "assets/ProgramPage-DNL4QYUM.js",
-  BASE + "assets/QuestionBankManager-CAjW3T9m.js",
+  BASE + "assets/index-EEDirkEc.js",
+  BASE + "assets/MistakeBook-C7YwfTAl.js",
+  BASE + "assets/PracticePage-BpmSCK3P.js",
+  BASE + "assets/ProgramPage-CJW4n98d.js",
+  BASE + "assets/QuestionBankManager-BzlvPq79.js",
   BASE + "assets/react-CKDqjp4T.js",
   BASE + "assets/rolldown-runtime-DN1TCW_I.js",
-  BASE + "assets/ScreeningPage-Dw8NEeUt.js",
-  BASE + "assets/TestRunner-DEJRa06j.js",
-  BASE + "assets/TopicPage--H4mhmEP.js",
+  BASE + "assets/ScreeningPage-CtVRX01N.js",
+  BASE + "assets/TestRunner-Bpou1nmU.js",
+  BASE + "assets/TopicPage-CMNIxeU5.js",
   BASE,
   INDEX,
   BASE + 'manifest.webmanifest',
@@ -78,19 +78,10 @@ self.addEventListener('fetch', event => {
   // Konu anlatımı, test ve etkinlikler: önbellekten hemen göster,
   // arkada ağdan güncelle (çevrimdışıyken daha önce açılanlar çalışır).
   if (url.pathname.startsWith(BASE + 'icerik/')) {
-    event.respondWith(
-      caches.open(CACHE).then(cache =>
-        cache.match(request).then(cached => {
-          const network = fetch(request)
-            .then(response => {
-              if (response.ok) cache.put(request, response.clone())
-              return response
-            })
-            .catch(() => cached)
-          return cached || network
-        })
-      )
-    )
+    event.respondWith(fetch(request).then(response => {
+      if (response.ok) { const copy = response.clone(); event.waitUntil(caches.open(CACHE).then(cache => cache.put(request, copy)).catch(() => undefined)) }
+      return response
+    }).catch(() => caches.open(CACHE).then(cache => cache.match(request))))
     return
   }
 
@@ -109,3 +100,4 @@ self.addEventListener('fetch', event => {
     )
   )
 })
+
