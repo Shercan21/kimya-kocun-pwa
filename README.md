@@ -17,7 +17,9 @@ Görünen ad: Kimya Koçun. Yerel kayıtlar, Drive yedek dosyası, çevrimdış�
 
 ## Yayınlama
 
-GitHub Actions akışı yalnızca elle başlatılır. Kod gönderilince otomatik yayın yapılmaz. Öğrenci testi tamamlandıktan sonra Pages kaynağı GitHub Actions seçilip yayın akışı çalıştırılır. BASE_PATH=/kimya-kocun-pwa/ ayarlıdır.
+Canlı adres: https://shercan21.github.io/kimya-kocun-pwa/
+
+GitHub Pages, gh-pages dalındaki hazır uygulama dosyalarını sunar. main dalına kaynak kodu göndermek tek başına canlı sürümü değiştirmez. Yeni yayın için BASE_PATH=/kimya-kocun-pwa/ ile derlenmiş dist içeriği ayrıca gh-pages dalına gönderilir. Eski kimya-kocum deposu ve yayını değiştirilmemiştir.
 
 ## Kontrol sınırları
 
