@@ -29,3 +29,5 @@ assert.equal(manifest.short_name,'Kimya Koçun');
 assert.equal(manifest.id,'/kimya-kocun-pwa/');
 assert.notEqual(new URL(manifest.id,'https://shercan21.github.io/').href,'https://shercan21.github.io/');
 console.log('OK App display name and separate installation identity');
+
+require('./test-order.test.cjs');

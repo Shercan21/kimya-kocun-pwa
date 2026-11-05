@@ -1,3 +1,4 @@
+import { prepareTestAttempt, shuffleOrder, questionFingerprint, canonicalAnswers, type TestDraft } from '../data/testOrder'
 import { tamGorselSoru, soruGorunumHtml } from '../data/questionDisplay'
 import { useEffect, useState } from 'react'
 import Icon from './Icon'
@@ -32,17 +33,23 @@ function Html({ html, className }: { html: string; className?: string }) {
   return <div className={className} dangerouslySetInnerHTML={{ __html: icerikHtml(html) }} />
 }
 
-export default function TestRunner({ grade, testId, testIndex, konuKod, konuBaslik, baslik, onClose, onNext, closeLabel }: Props) {
+export default function TestRunner(props: Props) {
+  return <TestAttempt key={`${props.grade}:${props.testId}:${props.testIndex}`} {...props} />
+}
+
+function TestAttempt({ grade, testId, testIndex, konuKod, konuBaslik, baslik, onClose, onNext, closeLabel }: Props) {
   const [dosya, setDosya] = useState<TestDosyasi | null>(null)
   const [hata, setHata] = useState('')
   const draftKey = 'kimya-kocun-pwa-test-draft-v1:' + grade + ':' + testId + ':' + testIndex
   const [draft] = useState(() => {
     try {
       const raw = JSON.parse(localStorage.getItem(draftKey) ?? 'null')
-      if (!raw || typeof raw.answers !== 'object' || !raw.answers || Date.now() - raw.at > 30 * 86400000) return null
-      return raw as { answers: Record<number, number>; index: number; at: number }
+      if (!raw || typeof raw.answers !== 'object' || !raw.answers || Array.isArray(raw.answers) || typeof raw.at !== 'number' || Date.now() - raw.at > 30 * 86400000) return null
+      return raw as TestDraft
     } catch { return null }
   })
+  const [order, setOrder] = useState<number[]>([])
+  const [resumed, setResumed] = useState(false)
   const [index, setIndex] = useState(draft?.index ?? 0)
   const [cevaplar, setCevaplar] = useState<Record<number, number>>(draft?.answers ?? {})
   const [draftError, setDraftError] = useState('')
@@ -53,10 +60,10 @@ export default function TestRunner({ grade, testId, testIndex, konuKod, konuBasl
 
   useEffect(() => {
     if (sonuc) return
-    if (!Object.keys(cevaplar).length) return
-    try { localStorage.setItem(draftKey, JSON.stringify({ answers: cevaplar, index, at: Date.now() })); setDraftError('') }
+    if (!dosya || !order.length) return
+    try { localStorage.setItem(draftKey, JSON.stringify({ answers: cevaplar, index, order, fingerprint: questionFingerprint(dosya.testler[testIndex]?.sorular ?? []), at: Date.now() })); setDraftError('') }
     catch { setDraftError('Cevapların bu cihazda kaydedilemedi. Testi kapatmadan tamamlamanı öneririz.') }
-  }, [cevaplar, index, draftKey, sonuc])
+  }, [cevaplar, index, draftKey, sonuc, order, dosya, testIndex])
 
   // Cevap verilmiş ve bitirilmemiş testten çıkarken onay iste.
   const devamEdiyor = !sonuc && Object.keys(cevaplar).length > 0
@@ -73,12 +80,20 @@ export default function TestRunner({ grade, testId, testIndex, konuKod, konuBasl
   useEffect(() => {
     let active = true
     testDosyasi(grade, testId)
-      .then(data => active && setDosya(data))
+      .then(data => {
+        if (!active) return
+        const attempt = prepareTestAttempt(data.testler[testIndex]?.sorular ?? [], draft)
+        setOrder(attempt.order)
+        setCevaplar(attempt.answers)
+        setIndex(attempt.index)
+        setResumed(attempt.resumed)
+        setDosya(data)
+      })
       .catch(() => active && setHata('Test yüklenemedi. İnternet bağlantını kontrol edip tekrar dene.'))
     return () => {
       active = false
     }
-  }, [grade, testId])
+  }, [grade, testId, testIndex, draft])
 
   if (hata) {
     return (
@@ -92,7 +107,8 @@ export default function TestRunner({ grade, testId, testIndex, konuKod, konuBasl
   if (!dosya) return <section className="card"><p className="muted">Test yükleniyor…</p></section>
 
   const test = dosya.testler[testIndex]
-  const sorular: Soru[] = test?.sorular ?? []
+  const kaynakSorular: Soru[] = test?.sorular ?? []
+  const sorular = order.map(i => kaynakSorular[i])
   const cevaplanan = Object.keys(cevaplar).length
   const soru = sorular[index]
 
@@ -103,15 +119,16 @@ export default function TestRunner({ grade, testId, testIndex, konuKod, konuBasl
     let bos = 0
     const varsayilan = testKazanimi(grade, testId)
     const kazanimlar: Record<string, [number, number]> = {}
-    sorular.forEach((item, i) => {
-      if (cevaplar[i] === undefined) bos++
-      else if (cevaplar[i] === item.d) dogru++
+    const kaynakCevaplar = canonicalAnswers(order, cevaplar)
+    kaynakSorular.forEach((item, i) => {
+      if (kaynakCevaplar[i] === undefined) bos++
+      else if (kaynakCevaplar[i] === item.d) dogru++
       else yanlisSorular.push(i)
       const k = item.k ?? varsayilan
       if (k) {
         const c = kazanimlar[k] ?? [0, 0]
         c[1]++
-        if (cevaplar[i] === item.d) c[0]++
+        if (kaynakCevaplar[i] === item.d) c[0]++
         kazanimlar[k] = c
       }
     })
@@ -139,9 +156,9 @@ export default function TestRunner({ grade, testId, testIndex, konuKod, konuBasl
       testIndex,
       konuKod,
       testBaslik: baslik,
-      dogruCevaplar: sorular.map(item => item.d),
-      sorular,
-      cevaplar,
+      dogruCevaplar: kaynakSorular.map(item => item.d),
+      sorular: kaynakSorular,
+      cevaplar: kaynakCevaplar,
     })
     localStorage.removeItem(draftKey)
     setIndex(0)
@@ -178,6 +195,8 @@ export default function TestRunner({ grade, testId, testIndex, konuKod, konuBasl
               type="button"
               className={onNext ? 'btn-secondary' : 'primary-button'}
               onClick={() => {
+                setOrder(shuffleOrder(kaynakSorular.length, Math.random, order))
+                setResumed(false)
                 setSonuc(null)
                 setCevaplar({})
                 setIndex(0)
@@ -214,7 +233,7 @@ export default function TestRunner({ grade, testId, testIndex, konuKod, konuBasl
                 ))}
               </ol>
               {durum !== 'dogru' && (() => {
-                const key = hataKaydiKey(grade, testId, testIndex, i, item.id)
+                const key = hataKaydiKey(grade, testId, testIndex, order[i], item.id)
                 const kayit = hatalar.find(h => h.key === key)
                 return (
                   <div className="neden">
@@ -266,7 +285,7 @@ export default function TestRunner({ grade, testId, testIndex, konuKod, konuBasl
           </div>
         </div>
       )}
-      {draftError ? <p className="form-error" role="alert">{draftError}</p> : <p className="draft-status"><Icon name="check" size={16}/>{draft ? 'Yarım kalan testine devam ediyorsun.' : 'Cevapların bu cihazda otomatik saklanır.'}</p>}
+      {draftError ? <p className="form-error" role="alert">{draftError}</p> : <p className="draft-status"><Icon name="check" size={16}/>{resumed ? 'Yarım kalan testine devam ediyorsun.' : 'Cevapların bu cihazda otomatik saklanır.'}</p>}
       <section className="card test-card">
         <div className="test-head">
           <button type="button" className="btn-ghost" onClick={cikmayiDene} aria-label="Testten çık">×</button>
