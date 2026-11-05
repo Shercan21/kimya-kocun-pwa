@@ -1,0 +1,1 @@
+function e(e){return/<img\b/i.test(e.s)?typeof e.gorselTamSoru==`boolean`?e.gorselTamSoru:e.sik.length>=2&&e.sik.every((e,t)=>e.replace(/<[^>]*>/g,``).replace(/&nbsp;/g,``).trim().replace(/[).:]$/,``)===String.fromCharCode(65+t)):!1}function t(t){return e(t)?(t.s.match(/<img\b[^>]*>/gi)||[]).join(``):t.s}export{e as n,t};
