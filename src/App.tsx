@@ -1,6 +1,7 @@
 import { lazy, Suspense, useEffect, useState } from 'react'
 import './App.css'
 import './student.css'
+import './student-polish.css'
 import OfflineCard from './components/OfflineCard'
 import LocalBackupCard from './components/LocalBackupCard'
 import ResourceLibrary from './components/ResourceLibrary'

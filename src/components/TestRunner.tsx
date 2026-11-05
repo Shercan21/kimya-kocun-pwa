@@ -1,3 +1,4 @@
+import QuestionContent from './QuestionContent'
 import { prepareTestAttempt, shuffleOrder, questionFingerprint, canonicalAnswers, type TestDraft } from '../data/testOrder'
 import { tamGorselSoru, soruGorunumHtml } from '../data/questionDisplay'
 import { useEffect, useState } from 'react'
@@ -169,9 +170,9 @@ function TestAttempt({ grade, testId, testIndex, konuKod, konuBaslik, baslik, on
     const oran = basari(sonuc)
     return (
       <div className="stack">
-        <section className="card result-card">
+        <section className={`card result-card${oran >= GECME_ORANI ? ' is-success' : ''}`}>
           <small>{baslik}</small>
-          <h2>%{oran} başarı</h2>
+          <div className="result-hero"><div className="result-orbit" style={{ background: `conic-gradient(${oran >= GECME_ORANI ? 'var(--teal-400)' : 'var(--purple-600)'} ${oran}%, var(--line) 0)` }}><div><strong>%{oran}</strong><span>başarı</span></div></div><div><span className="eyebrow">TEST TAMAMLANDI</span><h2>{oran >= GECME_ORANI ? 'Bir adım daha ileri!' : 'Her deneme bir adım.'}</h2></div></div>
           <div className="result-stats">
             <span className="ok">{sonuc.dogru} doğru</span>
             <span className="bad">{sonuc.yanlis} yanlış</span>
@@ -217,7 +218,7 @@ function TestAttempt({ grade, testId, testIndex, konuKod, konuBaslik, baslik, on
                 <b>{i + 1}. soru</b>
                 <span>{durum === 'dogru' ? 'Doğru' : durum === 'yanlis' ? 'Yanlış' : 'Boş'}</span>
               </div>
-              <Html className="soru-metni" html={soruGorunumHtml(item)} />
+              <QuestionContent html={soruGorunumHtml(item)} />
               <ol className={`siklar readonly${tamGorselSoru(item) ? ' gorsel-siklar' : ''}`}>
                 {item.sik.map((sik, j) => (
                   <li
@@ -295,6 +296,7 @@ function TestAttempt({ grade, testId, testIndex, konuKod, konuBaslik, baslik, on
           </div>
           <span className="muted small">{cevaplanan} cevaplandı</span>
         </div>
+        <div className="test-progress" role="progressbar" aria-label="Cevaplanan sorular" aria-valuemin={0} aria-valuemax={sorular.length} aria-valuenow={cevaplanan}><span style={{ width: `${sorular.length ? cevaplanan / sorular.length * 100 : 0}%` }} /></div>
         <div className="test-dots" role="group" aria-label="Sorular">
           {sorular.map((_, i) => (
             <button
@@ -310,8 +312,9 @@ function TestAttempt({ grade, testId, testIndex, konuKod, konuBaslik, baslik, on
         </div>
 
         {soru && (
-          <>
-            <Html className="soru-metni" html={soruGorunumHtml(soru)} />
+          <div className="question-stage" key={soru.id ?? order[index]}>
+            <div className="question-stage-heading"><span>SORU {String(index + 1).padStart(2, '0')}</span>{/<img\b/i.test(soru.s) && <small>Görsele dokunarak büyütebilirsin</small>}</div>
+            <QuestionContent html={soruGorunumHtml(soru)} />
             <ol className={`siklar${tamGorselSoru(soru) ? ' gorsel-siklar' : ''}`}>
               {soru.sik.map((sik, j) => (
                 <li key={j}>
@@ -334,7 +337,7 @@ function TestAttempt({ grade, testId, testIndex, konuKod, konuBaslik, baslik, on
                 </li>
               ))}
             </ol>
-          </>
+          </div>
         )}
 
         <div className="test-nav">
