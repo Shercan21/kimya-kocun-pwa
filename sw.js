@@ -3,28 +3,29 @@
 // /assets/ dosyaları: önce önbellek (adları içerik özetli, değişmez).
 // Yeni sürüm yayımlarken CACHE adını değiştirmek eski önbelleği temizler.
 
-const CACHE = 'kimya-kocun-pwa-v7'
+const CACHE = 'kimya-kocun-pwa-v8'
 // Yollar service worker'ın bulunduğu klasöre göre çözülür; böylece uygulama
 // hem alan adının kökünde hem de /kimya-kocun-pwa/ gibi bir alt yolda çalışır.
 const BASE = new URL('./', self.location).pathname
 const INDEX = BASE + 'index.html'
 const APP_SHELL = [
-  BASE + "assets/CoachPage-BVI3YRgg.js",
+  BASE + "assets/CoachPage-CFObhqcX.css",
+  BASE + "assets/CoachPage-CyAEg-LF.js",
   BASE + "assets/content-cY2eUw2P.js",
-  BASE + "assets/driveSync-BkgAAvV0.js",
-  BASE + "assets/ExamsPage-Bk4IAOI4.js",
+  BASE + "assets/driveSync-Dln4H0oX.js",
+  BASE + "assets/ExamsPage-C9Qfbxv4.js",
   BASE + "assets/index-Da4O36VH.css",
-  BASE + "assets/index-DDWxfOqY.js",
-  BASE + "assets/MistakeBook-BOfpcsk-.js",
-  BASE + "assets/PracticePage-D4MJ8N0_.js",
-  BASE + "assets/ProgramPage-CZ3OvMg-.js",
-  BASE + "assets/QuestionBankManager-COjdkdqz.js",
+  BASE + "assets/index-DCklN10C.js",
+  BASE + "assets/MistakeBook-2gcoHw_k.js",
+  BASE + "assets/PracticePage-b9cFb8me.js",
+  BASE + "assets/ProgramPage-UfgpP894.js",
+  BASE + "assets/QuestionBankManager-28eRFYED.js",
   BASE + "assets/questionDisplay-CHHN9yqX.js",
   BASE + "assets/react-CKDqjp4T.js",
   BASE + "assets/rolldown-runtime-DN1TCW_I.js",
-  BASE + "assets/ScreeningPage-Co30LjF7.js",
-  BASE + "assets/TestRunner-C4dddhHz.js",
-  BASE + "assets/TopicPage-f_QZPv_q.js",
+  BASE + "assets/ScreeningPage-N7lere1o.js",
+  BASE + "assets/TestRunner-BU-WMQjZ.js",
+  BASE + "assets/TopicPage-CZuR5DRo.js",
   BASE,
   INDEX,
   BASE + 'manifest.webmanifest',
