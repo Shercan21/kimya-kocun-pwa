@@ -1,3 +1,4 @@
+import { tamGorselSoru, soruGorunumHtml } from '../data/questionDisplay'
 import { useEffect, useState } from 'react'
 import Icon from './Icon'
 import { icerikHtml } from '../data/content'
@@ -247,8 +248,8 @@ export default function ScreeningPage({ grade, onChoosePlan }: Props) {
               </button>
             ))}
           </div>
-          <Html className="soru-metni" html={soru.soru.s} />
-          <ol className="siklar">
+          <Html className="soru-metni" html={soruGorunumHtml(soru.soru)} />
+          <ol className={`siklar${tamGorselSoru(soru.soru) ? ' gorsel-siklar' : ''}`}>
             {soru.soru.sik.map((sik, j) => (
               <li key={j}>
                 <button
@@ -265,7 +266,7 @@ export default function ScreeningPage({ grade, onChoosePlan }: Props) {
                   }
                 >
                   <span className="harf">{harf[j]}</span>
-                  <Html html={sik} />
+                  {!tamGorselSoru(soru.soru) && <Html html={sik} />}
                 </button>
               </li>
             ))}

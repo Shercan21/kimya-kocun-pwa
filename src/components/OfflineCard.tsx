@@ -8,7 +8,7 @@ export default function OfflineCard({grades}:{grades:number[]}) {
   setBusy(true);setMessage('Ders paketlerin indiriliyor…')
   try {
    if(!('caches' in window))throw Error('Önbellek bu tarayıcıda kullanılamıyor.')
-   const cache=await caches.open('kimya-kocun-pwa-v4')
+   const cache=await caches.open('kimya-kocun-pwa-v5')
    for(const grade of grades) {
     for(const file of ['konular.json','testler.json','etkinlikler.json','yazili.json','anlatim-detay.json']) {
      const url=import.meta.env.BASE_URL+'icerik/'+grade+'/'+file
@@ -28,4 +28,5 @@ export default function OfflineCard({grades}:{grades:number[]}) {
  }
  return <section className="card"><h3 className="card-title"><Icon name="book"/>İnternetsiz çalış</h3><p className="muted">{online?'İnternete bağlısın. Ders paketini önceden indirerek bağlantın yokken de çalışabilirsin.':'Şu an çevrimdışısın. Önceden indirdiğin içerikleri kullanabilirsin.'}</p><span className={'offline-badge '+(ready?'ready':'')}>{ready?'Ders paketi daha önce indirildi':'Ders paketi henüz indirilmedi'}</span><button className="btn-secondary" disabled={!online||busy} onClick={()=>void prepare()}>{busy?'İndiriliyor…':ready?'Ders paketini güncelle':'Ders paketini indir'}</button>{message&&<p className="small" role="status">{message}</p>}<p className="muted small">Tarayıcı verileri temizlenirse paketleri yeniden indirmen gerekir.</p></section>
 }
+
 

@@ -2532,3 +2532,8 @@ select.is-bad, input.is-bad { border-color: var(--coral-600) !important; }
 .ka-iki-kart { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin: 12px 0; }
 .ka-mini { background: #f6f5fd; border: 1px solid #dcd9f5; border-radius: 12px; padding: 10px 12px; }
 .ka-mini p { margin: 4px 0 0; font-size: .95em; }
+
+/* Soru ve seçenekler resimdeyse yalnız yanıt harfleri görünür. */
+.siklar.gorsel-siklar { display:flex; flex-wrap:wrap; gap:10px; }
+.siklar.gorsel-siklar > li { flex:0 0 auto; }
+.siklar.gorsel-siklar button, .siklar.gorsel-siklar.readonly li { justify-content:center; align-items:center; width:auto; min-width:56px; padding:10px; }

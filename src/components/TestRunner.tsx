@@ -1,3 +1,4 @@
+import { tamGorselSoru, soruGorunumHtml } from '../data/questionDisplay'
 import { useEffect, useState } from 'react'
 import Icon from './Icon'
 import { useBackStep } from '../data/backNav'
@@ -197,8 +198,8 @@ export default function TestRunner({ grade, testId, testIndex, konuKod, konuBasl
                 <b>{i + 1}. soru</b>
                 <span>{durum === 'dogru' ? 'Doğru' : durum === 'yanlis' ? 'Yanlış' : 'Boş'}</span>
               </div>
-              <Html className="soru-metni" html={item.s} />
-              <ol className="siklar readonly">
+              <Html className="soru-metni" html={soruGorunumHtml(item)} />
+              <ol className={`siklar readonly${tamGorselSoru(item) ? ' gorsel-siklar' : ''}`}>
                 {item.sik.map((sik, j) => (
                   <li
                     key={j}
@@ -208,7 +209,7 @@ export default function TestRunner({ grade, testId, testIndex, konuKod, konuBasl
                     ].join(' ')}
                   >
                     <span className="harf">{harf[j]}</span>
-                    <Html html={sik} />
+                    {!tamGorselSoru(item) && <Html html={sik} />}
                   </li>
                 ))}
               </ol>
@@ -291,8 +292,8 @@ export default function TestRunner({ grade, testId, testIndex, konuKod, konuBasl
 
         {soru && (
           <>
-            <Html className="soru-metni" html={soru.s} />
-            <ol className="siklar">
+            <Html className="soru-metni" html={soruGorunumHtml(soru)} />
+            <ol className={`siklar${tamGorselSoru(soru) ? ' gorsel-siklar' : ''}`}>
               {soru.sik.map((sik, j) => (
                 <li key={j}>
                   <button
@@ -309,7 +310,7 @@ export default function TestRunner({ grade, testId, testIndex, konuKod, konuBasl
                     aria-pressed={cevaplar[index] === j}
                   >
                     <span className="harf">{harf[j]}</span>
-                    <Html html={sik} />
+                    {!tamGorselSoru(soru) && <Html html={sik} />}
                   </button>
                 </li>
               ))}

@@ -42,6 +42,7 @@ export type SinifMufredat = {
 }
 
 export type Soru = {
+  gorselTamSoru?: boolean // Soru ve şıklar görselin içinde; yanıtta yalnız harfler gösterilir.
   id?: string
   s: string // HTML soru metni
   sik: string[] // HTML şıklar
