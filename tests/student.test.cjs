@@ -31,3 +31,5 @@ assert.notEqual(new URL(manifest.id,'https://shercan21.github.io/').href,'https:
 console.log('OK App display name and separate installation identity');
 
 require('./test-order.test.cjs');
+
+require('./coach-companion.test.cjs');

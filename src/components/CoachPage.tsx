@@ -1,5 +1,7 @@
 import { useMemo, useState } from 'react'
 import Icon from './Icon'
+import CoachCompanion from './CoachCompanion'
+import type { StudentProfile } from '../data/profile'
 import { tumKonular } from '../data/content'
 import { useHataDefteri } from '../data/mistakes'
 import {
@@ -12,6 +14,11 @@ import {
 
 type Props = {
   grades: number[]
+  allowed: Set<string>
+  known: Set<string>
+  profile?: StudentProfile
+  goal?: string
+  canSchedule: boolean
   onAction: (eylem: Eylem) => void
 }
 
@@ -36,7 +43,8 @@ function OneriKart({ oneri, onAction }: { oneri: Oneri; onAction: (e: Eylem) => 
   )
 }
 
-export default function CoachPage({ grades, onAction }: Props) {
+export default function CoachPage({ grades, allowed, known, profile, goal, canSchedule, onAction }: Props) {
+  const [details, setDetails] = useState(false)
   const hatalar = useHataDefteri()
   const [now] = useState(() => Date.now())
   const genel = useMemo(() => genelAnaliz(grades, hatalar, now), [grades, hatalar, now])
@@ -61,6 +69,9 @@ export default function CoachPage({ grades, onAction }: Props) {
   const toplamNeden = genel.nedenler.reduce((s, n) => s + n.sayi, 0)
 
   return (
+    <>
+    <CoachCompanion grades={grades} allowed={allowed} known={known} profile={profile} goal={goal} canSchedule={canSchedule} mistakes={hatalar} onAction={onAction} onDetails={() => setDetails(true)} />
+    <details className="coach-reports" open={details} onToggle={e => setDetails(e.currentTarget.open)}><summary>Ayrıntılı konu ve hata raporlarım</summary>
     <div className="today-grid">
       <div className="col">
         <section className="card coach-hero">
@@ -75,7 +86,7 @@ export default function CoachPage({ grades, onAction }: Props) {
           </p>
           {genel.oneriler.length > 0 ? (
             <ol className="coach-tips">
-              {genel.oneriler.map(o => (
+              {genel.oneriler.filter(o => !('grade' in o.eylem) || allowed.has(`${o.eylem.grade}|${o.eylem.kod}`)).map(o => (
                 <OneriKart key={o.id} oneri={o} onAction={onAction} />
               ))}
             </ol>
@@ -136,7 +147,7 @@ export default function CoachPage({ grades, onAction }: Props) {
 
               <h4 className="coach-sub">Ne yapmalısın?</h4>
               <ol className="coach-tips numbered">
-                {analiz.adimlar.map(o => (
+                {analiz.adimlar.filter(o => !('grade' in o.eylem) || allowed.has(`${o.eylem.grade}|${o.eylem.kod}`)).map(o => (
                   <OneriKart key={o.id} oneri={o} onAction={onAction} />
                 ))}
               </ol>
@@ -214,5 +225,6 @@ export default function CoachPage({ grades, onAction }: Props) {
         )}
       </div>
     </div>
+    </details></>
   )
 }

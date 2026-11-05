@@ -125,7 +125,7 @@ function App() {
 
   const [storedProfile, setProfile] = useState<StudentProfile | null>(loadProfile)
   const [editingProfile, setEditingProfile] = useState(false)
-  const [openTopic, setOpenTopic] = useState<{ grade: number; kod: string; tab?: TopicTab } | null>(null)
+  const [openTopic, setOpenTopic] = useState<{ grade: number; kod: string; tab?: TopicTab; level?: 'Kolay' | 'Orta' | 'Zor'; short?: boolean } | null>(null)
   const [mistakesOpen, setMistakesOpen] = useState(false)
 
   // 12. sınıf / mezun Derslerim'de TYT (9+10), AYT (11) ve 12 arasında geçer.
@@ -283,7 +283,7 @@ function App() {
     const kilitli =
       (mod === 'tam' && !teacherView && kilitliKonular([eylem.grade], bilinen).has(key)) ||
       (mod === 'konu' && localStorage.getItem(SECILI_KONU_KEY) !== key)
-    if (!kilitli) setOpenTopic({ grade: eylem.grade, kod: eylem.kod, tab: eylem.tur })
+    if (!kilitli) setOpenTopic({ grade: eylem.grade, kod: eylem.kod, tab: eylem.tur, level: eylem.seviye, short: eylem.kisa })
   }
 
   function updateStudentGoal(goal: string) {
@@ -325,7 +325,7 @@ function App() {
     const base = pages.find(item => item.id === m.id)!
     return { ...base, label: m.label ?? base.label, short: m.short ?? base.short }
   })
-  const shown: PageId = navPages.some(item => item.id === page) ? page : navPages[0].id
+  const shown: PageId = openTopic && page === 'lessons' ? 'lessons' : navPages.some(item => item.id === page) ? page : navPages[0].id
   const current = navPages.find(item => item.id === shown)!
   const labelOf = (item: (typeof navPages)[number]) =>
     item.id === 'exams' && isSenior && !teacherView ? 'TYT / AYT testleri' : item.label
@@ -432,10 +432,12 @@ function App() {
 
         {shown === 'lessons' && openTopic && (
           <TopicPage
-            key={`${openTopic.grade}-${openTopic.kod}-${openTopic.tab ?? ""}`}
+            key={`${openTopic.grade}-${openTopic.kod}-${openTopic.tab ?? ""}-${openTopic.level ?? ""}-${openTopic.short ?? false}`}
             grade={openTopic.grade}
             kod={openTopic.kod}
             initialTab={openTopic.tab}
+            initialTestLevel={openTopic.level}
+            initialShort={openTopic.short}
             onBack={() => {
               setOpenTopic(null)
               window.scrollTo({ top: 0 })
@@ -620,7 +622,7 @@ function App() {
         )}
 
         {shown === 'coach' && (
-          <CoachPage grades={teacherView ? SINAV_SINIFLARI.TYT_AYT : activeGrades} onAction={coachAction} />
+          <CoachPage grades={teacherView ? SINAV_SINIFLARI.TYT_AYT : activeGrades} profile={profile} goal={studentGoal} known={bilinen} canSchedule={mod === 'tam' && !teacherView} allowed={new Set((teacherView ? SINAV_SINIFLARI.TYT_AYT : activeGrades).flatMap(grade => tumKonular(grade).filter(({konu}) => (mod !== 'tam' || teacherView || !kilitliKonular([grade], bilinen).has(`${grade}|${konu.kod}`)) && (mod !== 'konu' || seciliKonu === `${grade}|${konu.kod}`)).map(({konu}) => `${grade}|${konu.kod}`)))} onAction={coachAction} />
         )}
 
         {shown === 'program' && (

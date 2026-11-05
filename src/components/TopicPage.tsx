@@ -18,6 +18,8 @@ type Props = {
   grade: number
   kod: string
   initialTab?: TopicTab
+  initialTestLevel?: 'Kolay' | 'Orta' | 'Zor'
+  initialShort?: boolean
   onBack: () => void
 }
 
@@ -39,17 +41,17 @@ function lastScore(grade: number, testId: string, seviye: string | null) {
   return last ? basari(last) : null
 }
 
-export default function TopicPage({ grade, kod, initialTab, onBack }: Props) {
+export default function TopicPage({ grade, kod, initialTab, initialTestLevel, initialShort, onBack }: Props) {
   const found = konuBul(grade, kod)
   const mufredat = sinifMufredati(grade)
   const [tab, setTab] = useState<Tab>(initialTab ?? 'anlatim')
   const [html, setHtml] = useState<string | null>(null)
   const [detail, setDetail] = useState<string | null>(null)
   const [detailError, setDetailError] = useState('')
-  const [reading, setReading] = useState<'detail' | 'summary'>('detail')
+  const [reading, setReading] = useState<'detail' | 'summary'>(initialShort ? 'summary' : 'detail')
   const [kit, setKit] = useState<EtkinlikKitabi | null>(null)
   const [error, setError] = useState('')
-  const [activeTest, setActiveTest] = useState<ActiveTest | null>(null)
+  const [activeTest, setActiveTest] = useState<ActiveTest | null>(() => { const k = found?.konu; if (!k?.test || !initialTestLevel) return null; const index = k.seviyeler.indexOf(initialTestLevel); return index < 0 ? null : {id: k.test, index, baslik: `${k.ad} · ${initialTestLevel}`}; })
   const [, refresh] = useState(0)
 
   useEffect(() => {

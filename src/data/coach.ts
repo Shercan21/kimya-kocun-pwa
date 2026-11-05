@@ -8,7 +8,7 @@ import { NEDEN_AD, type HataKaydi, type HataNedeni } from './mistakes'
 import { basari, GECME_ORANI, sonuclariYukle, type TestSonucu } from './results'
 
 export type Eylem =
-  | { tur: 'anlatim' | 'test' | 'etkinlik'; grade: number; kod: string }
+  | { tur: 'anlatim' | 'test' | 'etkinlik'; grade: number; kod: string; seviye?: 'Kolay' | 'Orta' | 'Zor'; kisa?: boolean }
   | { tur: 'hata' }
   | { tur: 'dersler' }
 
